@@ -29,3 +29,7 @@ Codice client/server.
 Log degli eventi.
 
 Breve relazione con schema del flusso.
+
+***
+
+qualche bug nel terminare la connessione, non funziona sempre

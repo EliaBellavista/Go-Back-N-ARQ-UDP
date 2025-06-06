@@ -1,9 +1,6 @@
 import random
 import time, socket, sys
 
-#TODO
-# magari un check di ip + porta?
-
 address = ('localhost', 12345)
 window = 8
 received = [] 
@@ -32,13 +29,14 @@ while True:
         continue
 
     if seqN == next:
-        if payload == b'\xff':
+        if payload == b'\xff':# pacchetto di fine
             break
 
         payload = payload.decode('utf8')
         print("received : %s, next: %d" % (seqN, next))
         received.append(payload)
-        next = (next + 1) % window
+
+        next = (next + 1) % window # aggiorna il prossimo sequence number atteso
     else:
         print("received out of order packet: %s, expected: %d" % (seqN, next))
 

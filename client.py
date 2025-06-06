@@ -15,9 +15,11 @@ confirmed_packets = 0
 total_acks = 0
 total_packets = 0
 
-def is_newer(seq1, seq2): #treu if seq1 is newer than seq2
+#treu if seq1 is newer than seq2
+def is_newer(seq1, seq2): 
     return (0 < (seq1 - seq2) % max_window <= max_window // 2)
 
+# thread per ricevere gli ack in concorrenza all'invio dei pacchetti
 def elaborate_ACKS(socket):
     print("hello from ack thread")
     global sent_window, confirmed_packets, total_acks, running
@@ -44,7 +46,7 @@ message = input("Inserisci stringa da inviare: ")
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.sendto("hello!".encode(), address)
 
-#thread per ricevere ack mentre invio pacchetti
+# avvio thread per ricevere ack mentre invio pacchetti
 thread_ack = threading.Thread(target=elaborate_ACKS, args=(sock,))
 thread_ack.daemon = True
 thread_ack.start()
@@ -52,6 +54,7 @@ print("started ack receiving thread")
 
 while running:
     print("inizio invio finestra")
+    
     while len(sent_window) < window: #continua finchè c`è spazio nella finestra
         time.sleep(delay)
 
@@ -79,7 +82,7 @@ while running:
     with lock:
         now = time.time()
         for seq in list(sent_window.keys()):
-            if now - sent_window[seq] > timeout:
+            if now - sent_window[seq] > timeout:    #se il pacchetto è scaduto
                 print("timeout per il pacchetto con seq: %d" % seq)
                 sent_window = {} #resetto tutta la finestra
                 SeqN = seq
